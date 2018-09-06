@@ -1,0 +1,6 @@
+python-ldap >= 2.4.41
+ldap3 >= 2.2.3
+pandas >= 0.21.0
+tabulate >= 0.8.2
+impacket >= 0.9.15
+netaddr >= 0.7.19
