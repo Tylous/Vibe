@@ -169,7 +169,6 @@ There are several different options that can be used with the ```show``` command
 Below are some examples of the information stored:
 
 ```
-
 >>show access admin
 +----------------+------------------------+--------------+
 | Computer       | Share                  | Permission   |
@@ -241,7 +240,7 @@ cramon                        Admin                         Administrator
 
 ## Search 
 
-The ```search <key word(s)``` command looks for a key word(s) through every field of every table for any matches, displaying all the information about that object it was discovered in.
+The ```search <key word(s)>``` command looks for a key word(s) through every field of every table for any matches, displaying all the information about that object it was discovered in.
 
 
 ```
