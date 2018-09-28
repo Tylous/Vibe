@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 from netaddr import *
 import re
 import random
@@ -24,7 +25,7 @@ def IP(netaddr):
 			for iprange in IPNetwork(IPString):
 				targets.append(str(iprange))
 		else:
-			print colors.RD + "[-] " + colors.NRM + "Invalid IP address"
+			print(colors.RD + "[-] " + colors.NRM + "Invalid IP address")
 	else:
 		range = IPString.split(' ')
 		for ips in range:

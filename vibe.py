@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import subprocess
 import argparse
 import cmd
@@ -77,7 +78,7 @@ class menu(cmd.Cmd):
 						cmd.Cmd.onecmd(self, store)
 						return cmd.Cmd.cmdloop(self, intro)
 					except NameError:
-						print "Nothing is stored"
+						print("Nothing is stored")
 						return cmd.Cmd.cmdloop(self, intro)
 				if option == 'fgpolicy':
 					tb = dp.read_sql('select * from FGPasswordPolicyTB', conn)
@@ -86,13 +87,13 @@ class menu(cmd.Cmd):
 					return cmd.Cmd.cmdloop(self, intro)
 				if option == 'pwdpolicy':
 					tb = dp.read_sql('select * from PasswordPolicyTB', conn)
-					print "Password Policy"
-					print "---------------"
-					print "Minimum Password Length: " + tb['Minimum Password Length'].to_string(index=False, header=False)
-					print "Lockout Threshold: " + tb['Lockout Threshold'].to_string(index=False, header=False)
-					print "Lockout Duration: " + tb['Lockout Duration'].to_string(index=False, header=False) + ' minutes'
-					print "Passwords Remembered: " + tb['Passwords Remembered'].to_string(index=False, header=False)
-					print "Password Properties: " + tb['Password Properties'].to_string(index=False, header=False)
+					print("Password Policy")
+					print("---------------")
+					print("Minimum Password Length: " + tb['Minimum Password Length'].to_string(index=False, header=False))
+					print("Lockout Threshold: " + tb['Lockout Threshold'].to_string(index=False, header=False))
+					print("Lockout Duration: " + tb['Lockout Duration'].to_string(index=False, header=False) + ' minutes')
+					print("Passwords Remembered: " + tb['Passwords Remembered'].to_string(index=False, header=False))
+					print("Password Properties: " + tb['Password Properties'].to_string(index=False, header=False))
 					return cmd.Cmd.cmdloop(self, intro)
 				if option.startswith('access'):
 					try:
@@ -103,19 +104,19 @@ class menu(cmd.Cmd):
 						tb = dp.read_sql('select * from ' + user + '', conn)
 						print (tabulate(tb, showindex=False, headers=tb.columns, tablefmt="grid"))
 					except IndexError:
-						print "Nothing recorded for this user"
+						print("Nothing recorded for this user")
 					return cmd.Cmd.cmdloop(self, intro)
 				if option == 'file servers':
 					FS_list = dp.read_sql('select * from FileServer', conn)
 					FS_list = tabulate(FS_list, showindex=False)
-					print "File Servers Discovered"
-					print FS_list
+					print("File Servers Discovered")
+					print(FS_list)
 					return cmd.Cmd.cmdloop(self, intro)
 				else:
-					print colors.BLU + "[-] " + colors.NRM + "Error: " + option + " does not exist or is empty, please try again."
+					print(colors.BLU + "[-] " + colors.NRM + "Error: " + option + " does not exist or is empty, please try again.")
 					return cmd.Cmd.cmdloop(self, intro)
 			except pandas.io.sql.DatabaseError:
-				print colors.RD + "[-] " + colors.NRM + "Error: Empty database. Object may not exist."
+				print(colors.RD + "[-] " + colors.NRM + "Error: Empty database. Object may not exist.")
 
 		def do_net(self, option, intro=None):
 			try:
@@ -126,69 +127,69 @@ class menu(cmd.Cmd):
 				if type in ["user"]:
 					tb = dp.read_sql('select * from UserTB where Username = \'' + value + '\' COLLATE NOCASE', conn)
 					if tb.empty:
-						print colors.BLU + "[*] " + colors.NRM + 'User: ' + value + ' does not exist, please try again'
+						print(colors.BLU + "[*] " + colors.NRM + 'User: ' + value + ' does not exist, please try again')
 						return
-					print 'Username: ' + tb['Username'].to_string(index=False, header=False)
-					print 'SID: ' + tb['SID'].to_string(index=False, header=False)
-					print 'Description: ' + tb['Description'].to_string(index=False, header=False)
-					print 'Home Directory : ' + tb['Home Directory'].to_string(index=False, header=False)
-					print 'Profile Path : ' + tb['Profile Path'].to_string(index=False, header=False)
-					print 'Password Last Set: ' + tb['Password Last Set'].to_string(index=False, header=False)
-					print 'Last Logged On: ' + tb['Last Logged On'].to_string(index=False, header=False)
-					print 'Account Settings: ' + tb['Account Settings'].to_string(index=False, header=False).replace('\'', '').replace('\\n', ',')
-					print '----------------------------------------------------------------------------------'
-					print 'Primary Group Name : ' + tb['Primary Group Name'].to_string(index=False, header=False).replace('\\n', '')
-					print 'Group Membership: '
+					print('Username: ' + tb['Username'].to_string(index=False, header=False))
+					print('SID: ' + tb['SID'].to_string(index=False, header=False))
+					print('Description: ' + tb['Description'].to_string(index=False, header=False))
+					print('Home Directory : ' + tb['Home Directory'].to_string(index=False, header=False))
+					print('Profile Path : ' + tb['Profile Path'].to_string(index=False, header=False))
+					print('Password Last Set: ' + tb['Password Last Set'].to_string(index=False, header=False))
+					print('Last Logged On: ' + tb['Last Logged On'].to_string(index=False, header=False))
+					print('Account Settings: ' + tb['Account Settings'].to_string(index=False, header=False).replace('\'', '').replace('\\n', ','))
+					print('----------------------------------------------------------------------------------')
+					print('Primary Group Name : ' + tb['Primary Group Name'].to_string(index=False, header=False).replace('\\n', ''))
+					print('Group Membership: ')
 					display_Members_Of = tb['Member Of'].to_string(index=False, header=False).split('\\n')
 					display_Members_Of.append(' ')
 					display_Members_Of.append(' ')
 					for c1, c2, c3 in zip(display_Members_Of[::3], display_Members_Of[1::3], display_Members_Of[2::3]):
-						print '{:<30}{:<30}{:<}'.format(c1, c2, c3)
+						print('{:<30}{:<30}{:<}'.format(c1, c2, c3))
 					result(tb)
 				elif type in ["group"]:
 					tb = dp.read_sql('select * from GroupTB where Name = \'' + value + '\' COLLATE NOCASE', conn)
 					if tb.empty:
-						print colors.BLU + "[*] " + colors.NRM + 'Group: ' + value + ' does not exist, please try again'
+						print(colors.BLU + "[*] " + colors.NRM + 'Group: ' + value + ' does not exist, please try again')
 						return
-					print 'Group name: ' + tb['Name'].to_string(index=False, header=False)
-					print 'Description: ' + tb['Description'].to_string(index=False, header=False)
-					print 'Group Membership:'
+					print('Group name: ' + tb['Name'].to_string(index=False, header=False))
+					print('Description: ' + tb['Description'].to_string(index=False, header=False))
+					print('Group Membership:')
 					display_Membership = tb['Member Of'].to_string(index=False, header=False).split('\\n')
 					display_Membership.append(' ')
 					display_Membership.append(' ')
 					for c1, c2, c3 in zip(display_Membership[::3], display_Membership[1::3], display_Membership[2::3]):
-						print'{:<30}{:<30}{:<}'.format(c1, c2, c3)
-					print '----------------------------------------------------------------------------------'
-					print 'Members:'
+						print('{:<30}{:<30}{:<}'.format(c1, c2, c3))
+					print('----------------------------------------------------------------------------------')
+					print('Members:')
 					display_Members = tb['Members'].to_string(index=False, header=False).split('\\n')
 					display_Members.append(' ')
 					display_Members.append(' ')
 					for c1, c2, c3 in zip(display_Members[::3], display_Members[1::3], display_Members[2::3]):
-						print '{:<30}{:<30}{:<}'.format(c1, c2, c3)
+						print('{:<30}{:<30}{:<}'.format(c1, c2, c3))
 					result(tb)
 				elif type in ["computer"]:
 					tb = dp.read_sql('select * from ComputerTB where Name = \'' + value + '\' COLLATE NOCASE', conn)
 					if tb.empty:
-						print colors.BLU + "[*] " + colors.NRM + 'Computer: ' + value + ' does not exist, please try again'
+						print(colors.BLU + "[*] " + colors.NRM + 'Computer: ' + value + ' does not exist, please try again')
 						return
-					print 'Computer Name: ' + tb['Name'].to_string(index=False, header=False)
-					print 'Description: ' + tb['Description'].to_string(index=False, header=False)
-					print 'Operating System: ' + tb['Operating System'].to_string(index=False, header=False)
-					print 'Version Number: ' + tb['Operating System Version Number'].to_string(index=False, header=False)
-					print '----------------------------------------------------------------------------------'
-					print 'Group Membership: '
+					print('Computer Name: ' + tb['Name'].to_string(index=False, header=False))
+					print('Description: ' + tb['Description'].to_string(index=False, header=False))
+					print('Operating System: ' + tb['Operating System'].to_string(index=False, header=False))
+					print('Version Number: ' + tb['Operating System Version Number'].to_string(index=False, header=False))
+					print('----------------------------------------------------------------------------------')
+					print('Group Membership: ')
 					display_Members_Of = tb['Member Of'].to_string(index=False, header=False).split('\\n')
 					display_Members_Of.append(' ')
 					display_Members_Of.append(' ')
 					for c1, c2, c3 in zip(display_Members_Of[::3], display_Members_Of[1::3], display_Members_Of[2::3]):
-						print '{:<30}{:<30}{:<}'.format(c1, c2, c3)
+						print('{:<30}{:<30}{:<}'.format(c1, c2, c3))
 					result(tb)
 				else:
-					print colors.RD + "[-] " + colors.NRM + "Error: Invalid net request, please try again."
+					print(colors.RD + "[-] " + colors.NRM + "Error: Invalid net request, please try again.")
 					return cmd.Cmd.cmdloop(self, intro)
 				return cmd.Cmd.cmdloop(self, intro)
 			except pandas.io.sql.DatabaseError:
-				print colors.RD + "[-] " + colors.NRM + "Error: Empty database."
+				print(colors.RD + "[-] " + colors.NRM + "Error: Empty database.")
 
 		def do_query(self, option, intro=None):
 			try:
@@ -199,14 +200,14 @@ class menu(cmd.Cmd):
 				elif 'computer' in option:
 					option = option.replace("computer", "ComputerTB")
 				else:
-					print "Error: Invalid query, please try again."
+					print("Error: Invalid query, please try again.")
 					return cmd.Cmd.cmdloop(self, intro)
 				tb = dp.read_sql(option, conn)
 				print (tabulate(tb, showindex=False, headers=tb.columns, tablefmt="psql"))
 				result(tb)
 				return cmd.Cmd.cmdloop(self, intro)
 			except pandas.io.sql.DatabaseError:
-				print colors.RD + "[-] " + colors.NRM + "Error: Empty Database."
+				print(colors.RD + "[-] " + colors.NRM + "Error: Empty Database.")
 
 		def do_search(self, option, intro=None):
 			value = option
@@ -216,8 +217,8 @@ class menu(cmd.Cmd):
 			if group_tb.empty:
 				pass
 			else:
-				print "Groups"
-				print "---------"
+				print("Groups")
+				print("---------")
 				print (tabulate(group_tb, showindex=False, headers=group_tb.columns, tablefmt="grid"))
 			user_tb = dp.read_sql('select * from UserTB where Username like "%' + value + '%" or Description like "%' + value + '%" or SID like "%' + value + '%" or "Profile Path" like "%' + value + '%" or "Home Directory" like "%' + value + '%" or "Password Last Set" like "%' + value + '%" or "Last Logged On" like "%' + value + '%" or "Account Settings" like "%' + value + '%" or "Primary Group Name" like "%' + value + '%" or "Member Of" like "%' + value + '%" COLLATE NOCASE', conn)
 			user_tb['Description'] = user_tb['Description'].str[:35] + '...'
@@ -226,15 +227,15 @@ class menu(cmd.Cmd):
 			if user_tb.empty:
 				pass
 			else:
-				print "Users"
-				print "---------"
+				print("Users")
+				print("---------")
 				print (tabulate(user_tb, showindex=False, headers=user_tb.columns, tablefmt="grid"))
 			computer_tb = dp.read_sql('select * from ComputerTB where Name like "%' + value + '%" or Description like "%' + value + '%" or "Operating System" like "%' + value + '%" or "Operating System Version Number" like "%' + value + '%"  or "Member Of" like "%' + value + '%" COLLATE NOCASE', conn)
 			if computer_tb.empty:
 				pass
 			else:
-				print "Computers"
-				print "---------"
+				print("Computers")
+				print("---------")
 				print (tabulate(computer_tb, showindex=False, headers=computer_tb.columns, tablefmt="grid"))
 			return cmd.Cmd.cmdloop(self, intro)
 
@@ -261,7 +262,7 @@ class menu(cmd.Cmd):
 						else:
 							netaddr = addr
 					except Error as e:
-						print "Bad file"
+						print("Bad file")
 				if arg == "-j" or arg == "--jitter":
 					jitter = next(args)
 			return
@@ -270,12 +271,12 @@ class menu(cmd.Cmd):
 			try:
 				self.cmd_sub_arg_parse(option)
 				if not netaddr:
-					print colors.RD + "[-] " + colors.NRM + "No target provided, Please try again"
+					print(colors.RD + "[-] " + colors.NRM + "No target provided, Please try again")
 					return
 				else:
 					targets = IP(netaddr)
 				if not creds(user):
-					print colors.RD + "[-] " + colors.NRM + "No user selected, Please try again"
+					print(colors.RD + "[-] " + colors.NRM + "No user selected, Please try again")
 				else:
 					pass
 				domain = creds(user)[0]
@@ -284,20 +285,20 @@ class menu(cmd.Cmd):
 				r = Sessions(domain, username, password, jitter)
 				r.sessions(targets)
 			except IndexError:
-				print colors.RD + "[-] " + colors.NRM + "Invalid Option"
-				print colors.BLU + "[*] " + colors.NRM + "Scans target(s) enumerating who has or is currently logged into the target(s), using  -u/--user. Can take a list or range of hosts, using -t/--target. To throttle the speed use the -j/--jitter and the number of seconds (default 1). Example  session --user admin -t 192.168.1./24 -j 3."
+				print(colors.RD + "[-] " + colors.NRM + "Invalid Option")
+				print(colors.BLU + "[*] " + colors.NRM + "Scans target(s) enumerating who has or is currently logged into the target(s), using  -u/--user. Can take a list or range of hosts, using -t/--target. To throttle the speed use the -j/--jitter and the number of seconds (default 1). Example  session --user admin -t 192.168.1./24 -j 3.")
 			return cmd.Cmd.cmdloop(self, intro)
 
 		def do_share_hunter(self, option, intro=None):
 			try:
 				self.cmd_sub_arg_parse(option)
 				if not netaddr:
-					print colors.RD + "[-] " + colors.NRM + "No target provided, Please try again"
+					print(colors.RD + "[-] " + colors.NRM + "No target provided, Please try again")
 					return
 				else:
 					targets = IP(netaddr)
 				if not creds(user):
-					print colors.RD + "[-] " + colors.NRM + "No user selected, Please try again"
+					print(colors.RD + "[-] " + colors.NRM + "No user selected, Please try again")
 				else:
 					domain = creds(user)[0]
 					username = creds(user)[1]
@@ -305,24 +306,24 @@ class menu(cmd.Cmd):
 					sh = Share_Hunting(domain, username, password, jitter)
 					sh.share_hunter(targets)
 			except IndexError:
-				print colors.RD + "[-] " + colors.NRM + "Invalid Option"
-				print colors.BLU + "[*] " + colors.NRM + "Scans target(s) enumerating the shares on the target(s) and the level of access the specified user, using  -u/--user. Can take a list or range of hosts, using -t/--target. Example  share_hunter --user admin -t 192.168.1./24 -j 3."
+				print(colors.RD + "[-] " + colors.NRM + "Invalid Option")
+				print(colors.BLU + "[*] " + colors.NRM + "Scans target(s) enumerating the shares on the target(s) and the level of access the specified user, using  -u/--user. Can take a list or range of hosts, using -t/--target. Example  share_hunter --user admin -t 192.168.1./24 -j 3.")
 			return cmd.Cmd.cmdloop(self, intro)
 
 		def do_help(self, intro=None):
-			print "Commands"
-			print "========"
-			print "add_cred             Adds credentials to the credential table. Use -p for passwords and -h for password hashes"
-			print "clear                Clears the screen"
-			print "help                 Displays this help menu"
-			print "session              Scans target(s) to see who has/is currently logged in. Can take a list or range of hosts, using -t/--target and specify a user using -u/--user and --jitter/-j to add a delay. Requires: read/write privileges on either Admin$ or C$ share"
-			print "net                  Perform a query to view all information pertaining to a specific user, group, or computer (Similar to the Windows net user, net group commands). example: \'net group Domain Admins\'"
-			print "query                Executes a query on the contents of tables"
-			print "search               Searches for a key word(s) through every field of every table for any matches, displaying row"
-			print "share_hunter         Scans target(s) enumerating the shares on the target(s) and the level of access the specified user, using  -u/--user. Can take a list or range of hosts, using -t/--target and --jitter/-j to add a delay"
-			print "show                 Shows the contents of Computers, Credentials, Groups, Password policy, Store, Credentials, Files Servers and Access tables"
-			print "store                Displays the contents of a specific table. Example: \'show [table name] (access, creds, computers, file servers, pwdpolicy, users)"
-			print "exit                 Exit Vibe"
+			print("Commands")
+			print("========")
+			print("add_cred             Adds credentials to the credential table. Use -p for passwords and -h for password hashes")
+			print("clear                Clears the screen")
+			print("help                 Displays this help menu")
+			print("session              Scans target(s) to see who has/is currently logged in. Can take a list or range of hosts, using -t/--target and specify a user using -u/--user and --jitter/-j to add a delay. Requires: read/write privileges on either Admin$ or C$ share")
+			print("net                  Perform a query to view all information pertaining to a specific user, group, or computer (Similar to the Windows net user, net group commands). example: \'net group Domain Admins\'")
+			print("query                Executes a query on the contents of tables")
+			print("search               Searches for a key word(s) through every field of every table for any matches, displaying row")
+			print("share_hunter         Scans target(s) enumerating the shares on the target(s) and the level of access the specified user, using  -u/--user. Can take a list or range of hosts, using -t/--target and --jitter/-j to add a delay")
+			print("show                 Shows the contents of Computers, Credentials, Groups, Password policy, Store, Credentials, Files Servers and Access tables")
+			print("store                Displays the contents of a specific table. Example: \'show [table name] (access, creds, computers, file servers, pwdpolicy, users)")
+			print("exit                 Exit Vibe")
 			return cmd.Cmd.cmdloop(self, intro)
 
 		def do_store(self, intro=None):
@@ -343,7 +344,7 @@ class menu(cmd.Cmd):
 					password = ' '
 				cred_db(domain, username, password, hash)
 			except IndexError:
-				print "[-] Invalid Option"
+				print("[-] Invalid Option")
 			return cmd.Cmd.cmdloop(self, intro)
 
 		def do_clear(self, intro=None):
@@ -381,28 +382,28 @@ class menu(cmd.Cmd):
 			return completions
 
 		def do_exit(self, line):
-			print colors.BLU + "[*] " + colors.NRM + "Exiting..."
+			print(colors.BLU + "[*] " + colors.NRM + "Exiting...")
 			return True
 
 		def do_EOF(self, line):
 			return True
 	except IndexError:
-		print colors.BLU + "[*] " + colors.NRM + "Missing argument"
+		print(colors.BLU + "[*] " + colors.NRM + "Missing argument")
 
 
-print "\n"
-print" ___      ___  ___      ________      _______ "
-print"|\  \    /  /||\  \    |\   __  \    |\  ____\ "
-print"\ \  \  /  / /\ \  \   \ \  \|\ /_   \ \ \_____    "
-print" \ \  \/  / /  \ \  \   \ \   __  \   \ \  ____\        "
-print"  \ \    / /    \ \  \   \ \  \|\  \   \ \  \____ "
-print"   \ \__/ /      \ \__\   \ \_______\   \ \______\ "
-print"    \|__|/        \|__|    \|_______|    \|______|  "
-print"                                           (@Tyl0us)    "
-print "\n"
+print("\n")
+print(" ___      ___  ___      ________      _______ ")
+print("|\  \    /  /||\  \    |\   __  \    |\  ____\ ")
+print("\ \  \  /  / /\ \  \   \ \  \|\ /_   \ \ \_____    ")
+print(" \ \  \/  / /  \ \  \   \ \   __  \   \ \  ____\        ")
+print("  \ \    / /    \ \  \   \ \  \|\  \   \ \  \____ ")
+print("   \ \__/ /      \ \__\   \ \_______\   \ \______\ ")
+print("    \|__|/        \|__|    \|_______|    \|______|  ")
+print("                                           (@Tyl0us)    ")
+print("\n")
 
 if args.remove:
-	print colors.GRN + "[+] " + colors.NRM + "Removed Domain Database: " +args.domain
+	print(colors.GRN + "[+] " + colors.NRM + "Removed Domain Database: " +args.domain)
 	subprocess.call("rm -rf .db/" + args.domain + ".db", shell=True)
 	sys.exit()
 
@@ -427,11 +428,11 @@ else:
 			spinner = Spinner()
 			l = ldapz()
 			l.main(args.IP, args.username, args.domain, args.password)
-			print colors.BLU + "[*] " + colors.NRM + str(time.time() - t)
+			print(colors.BLU + "[*] " + colors.NRM + str(time.time() - t))
 		except Error as e:
-			print e
+			print(e)
 			spinner.stop()
-			print colors.RD + "[-] " + colors.NRM + "Error Occurred While Generating The Domain"
+			print(colors.RD + "[-] " + colors.NRM + "Error Occurred While Generating The Domain")
 			subprocess.call("rm -rf .db/" + args.domain + ".db", shell=True)
 
 if __name__ == '__main__':

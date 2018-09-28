@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import warnings
 warnings.simplefilter("ignore", UserWarning)
 import ldap
@@ -104,15 +105,15 @@ class ldapz():
 		con = ldap.initialize('ldaps://'+IP )
 		try:
 			con.simple_bind_s(lusername + '@' + domain, password)
-			print colors.GRN + "[+] "+ colors.NRM + "Credentials valid, generating database"
+			print(colors.GRN + "[+] "+ colors.NRM + "Credentials valid, generating database")
 			spinner = Spinner ()
 			spinner.start ()
 		except ldap.INVALID_CREDENTIALS:
-			print colors.RD + "[-] "+ colors.NRM +  "Username or password is incorrect."
+			print(colors.RD + "[-] "+ colors.NRM +  "Username or password is incorrect.")
 			os.remove ( ".db/" + domain + ".db")
 			sys.exit()
 		except ldap.SERVER_DOWN:
-			print colors.RD + "[-] "+ colors.NRM + "Domain Controller either down or unreachable"
+			print(colors.RD + "[-] "+ colors.NRM + "Domain Controller either down or unreachable")
 			sys.exit()
 		dictionary=['distinguishedName', 'sAMAccountName']
 		user_attributes = ['distinguishedName', 'sAMAccountName', 'description', 'objectSid', 'homeDirectory', 'profilePath', 'pwdLastSet', 'lastLogon', 'memberOf',
@@ -326,5 +327,5 @@ class ldapz():
 		sql.Close()
 		fileshare ()
 		spinner.stop ()
-		print colors.GRN + "[+] "+ colors.NRM + "Database successfully created"
+		print(colors.GRN + "[+] "+ colors.NRM + "Database successfully created")
 		groupIDquery ()
