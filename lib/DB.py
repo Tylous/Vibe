@@ -101,7 +101,7 @@ def sharetable(user, share_db):
     cl.reset_index ( inplace=True )
     del cl['index']
     cl.to_sql ( user, connection, index=False, if_exists="append" )
-    cleanup = dp.read_sql("'select * from '{}'".format(user), connection).drop_duplicates()
+    cleanup = dp.read_sql("select * from '{}'".format(user), connection).drop_duplicates()
     cleanup.to_sql(user, connection, index=False, if_exists="replace")
 
 def fileshare():
