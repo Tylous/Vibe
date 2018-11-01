@@ -80,6 +80,7 @@ Commands
 add_cred             Adds credentials to the credential table. Use -p for passwords and -h for password hashes
 clear                Clears the screen
 help                 Displays this help menu
+list                 Lists either all Users, Computers, or Groups. Use the -f option to pipe the contents to a file
 session              Scans target(s) to see who has/is currently logged in. Can take a list or range of hosts, using -t/--target and specify a user using -u/--user and --jitter/-j to add a delay. Requires: read/write privileges on either Admin$ or C$ share
 net                  Perform a query to view all information pertaining to a specific user, group, or computer (Similar to the Windows net user, net group commands). example: 'net group Domain Admins'
 query                Executes a query on the contents of tables
@@ -340,7 +341,7 @@ SLServer01
 ```
 ## Lit
 
-The ```list``` commmand displays either all Users, Computers, or Groups. Use the `-f` option to pipe the out of the command  to a file.
+The ```list``` commmand displays either all Users, Computers, or Groups. Use the `-f` option to pipe the output of the command to a file.
 
 ```
 >>list users -f /tmp/users
