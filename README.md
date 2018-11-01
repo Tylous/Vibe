@@ -93,7 +93,7 @@ exit                 Exit Vibe
 
 ```
 
-##Domain Information Quering 
+## Domain Information Quering 
 
 The ```show``` command displays the contents of a table, specific information across all tables or the available modules, using the following syntax:
 
