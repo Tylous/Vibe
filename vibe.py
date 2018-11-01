@@ -190,6 +190,44 @@ class menu(cmd.Cmd):
 			except pandas.io.sql.DatabaseError:
 				print colors.RD + "[-] " + colors.NRM + "Error: Empty database."
 
+		def do_list(self, option, intro=None):
+			try:
+				if "users" in option:
+					tb = dp.read_sql('select Username from UserTB', conn)
+					Users = tabulate(tb, showindex=False)
+					print Users.strip()
+					result(Users)
+					if "-f" in option or "--file" in option:
+						option = option.split(" ")
+						filepath = option[2]
+						tb.to_csv(filepath, sep='\t', index=False)
+						print colors.GRN + "[+] " + colors.NRM + "Exported List of Users to: "+ filepath
+					return cmd.Cmd.cmdloop(self, intro)
+				if "groups" in option:
+					tb = dp.read_sql('select Name from GroupTB', conn)
+					Groups = tabulate(tb, showindex=False)
+					print Groups.strip()
+					result(Groups)
+					if "-f" in option or "--file" in option:
+						option = option.split(" ")
+						filepath = option[2]
+						tb.to_csv(filepath, sep='\t', index=False)
+						print colors.GRN + "[+] " + colors.NRM + "Exported List of Groups to: " + filepath
+					return cmd.Cmd.cmdloop(self, intro)
+				if "computers" in option:
+					tb = dp.read_sql('select Name from ComputerTB', conn)
+					Computers = tabulate(tb, showindex=False)
+					print Computers.strip()
+					result(Computers)
+					if "-f" in option or "--file" in option:
+						option = option.split(" ")
+						filepath = option[2]
+						tb.to_csv(filepath, sep='\t', index=False)
+						print colors.GRN + "[+] " + colors.NRM + "Exported List of Computers to: " + filepath
+					return cmd.Cmd.cmdloop(self, intro)
+			except pandas.io.sql.DatabaseError:
+				print colors.RD + "[-] " + colors.NRM + "Error: Empty Database."
+
 		def do_query(self, option, intro=None):
 			try:
 				if 'user' in option:
@@ -315,12 +353,13 @@ class menu(cmd.Cmd):
 			print "add_cred             Adds credentials to the credential table. Use -p for passwords and -h for password hashes"
 			print "clear                Clears the screen"
 			print "help                 Displays this help menu"
+			print "list                 Lists either all Users, Computers, or Groups. Use the -f option to pipe the contents to a file"
 			print "session              Scans target(s) to see who has/is currently logged in. Can take a list or range of hosts, using -t/--target and specify a user using -u/--user and --jitter/-j to add a delay. Requires: read/write privileges on either Admin$ or C$ share"
 			print "net                  Perform a query to view all information pertaining to a specific user, group, or computer (Similar to the Windows net user, net group commands). example: \'net group Domain Admins\'"
 			print "query                Executes a query on the contents of tables"
 			print "search               Searches for a key word(s) through every field of every table for any matches, displaying row"
 			print "share_hunter         Scans target(s) enumerating the shares on the target(s) and the level of access the specified user, using  -u/--user. Can take a list or range of hosts, using -t/--target and --jitter/-j to add a delay"
-			print "show                 Shows the contents of Computers, Credentials, Groups, Password policy, Store, Credentials, Files Servers and Access tables"
+			print "show                 Shows the contents of Users, Computers, Credentials, Groups, Password policy, Store, Credentials, Files Servers and Access tables"
 			print "store                Displays the contents of a specific table. Example: \'show [table name] (access, creds, computers, file servers, pwdpolicy, users)"
 			print "exit                 Exit Vibe"
 			return cmd.Cmd.cmdloop(self, intro)
