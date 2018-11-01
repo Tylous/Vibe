@@ -12,7 +12,7 @@ class colors:
 def IP(netaddr):
 	targets = []
 	IPString = netaddr
-	pattern = r'[^.a-zA-Z0-9 ]'
+	pattern = r'[^.a-zA-Z0-9]'
 	if not IPString:
 		return
 	elif re.search(pattern, IPString):
@@ -20,6 +20,10 @@ def IP(netaddr):
 			startIP, endIP = IPString.split('-')
 			for ip in IPRange(startIP, endIP):
 				targets.append(str(ip))
+		elif "," in IPString:
+				ips = IPString.split(',')
+				for ip in ips:
+					targets.append(str(ip))
 		elif '/' in IPString:
 			for iprange in IPNetwork(IPString):
 				targets.append(str(iprange))
