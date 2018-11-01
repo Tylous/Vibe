@@ -106,23 +106,26 @@ def sharetable(user, share_db):
 
 def fileshare():
     connect_db ()
-    FS_list = dp.read_sql ( 'select "Home Directory", "Profile Path" from UserTB', connection ).drop_duplicates()
-    if not FS_list.values.any:
+    try:
+        FS_list = dp.read_sql ( 'select "Home Directory", "Profile Path" from UserTB', connection ).drop_duplicates()
+        if not FS_list.values.any:
+            pass
+        else:
+            FS_list = FS_list.drop_duplicates()
+            FS_list = FS_list.to_string(header=False, index=False)
+            FS_list = FS_list.upper()
+            FS_list = FS_list.replace("\n", "").replace(" ", "")
+            FS_list = FS_list.split("\\")
+            uname_list = dp.read_sql ( 'select Name from ComputerTB', connection )
+            uname_list = uname_list.to_string ( header=False, index=False )
+            uname_list = uname_list.split ()
+            l3 = [x for x in FS_list if x in uname_list]
+            l3 = filter ( None, l3 )
+            final = dp.DataFrame ( l3 )
+            final = final.drop_duplicates ()
+            final.to_sql("FileServer", connection, index=False, if_exists="replace")
+    except ValueError:
         pass
-    else:
-        FS_list = FS_list.drop_duplicates()
-        FS_list = FS_list.to_string(header=False, index=False)
-        FS_list = FS_list.upper()
-        FS_list = FS_list.replace("\n", "").replace(" ", "")
-        FS_list = FS_list.split("\\")
-        uname_list = dp.read_sql ( 'select Name from ComputerTB', connection )
-        uname_list = uname_list.to_string ( header=False, index=False )
-        uname_list = uname_list.split ()
-        l3 = [x for x in FS_list if x in uname_list]
-        l3 = filter ( None, l3 )
-        final = dp.DataFrame ( l3 )
-        final = final.drop_duplicates ()
-        final.to_sql("FileServer", connection, index=False, if_exists="replace")
 
 
 class load():
@@ -147,4 +150,5 @@ class load():
     def Close(self):
         connection.commit()
         connection.close()
+
 
