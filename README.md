@@ -338,3 +338,25 @@ SLServer01
      [*] cramon lastlogon: Thu Mar  1 21:00:58 2018
      [*] hwells lastlogon: Wed Mar 28 23:44:30 2018
 ```
+## Lit
+
+The ```list``` commmand displays either all Users, Computers, or Groups. Use the `-f` option to pipe the out of the command  to a file.
+
+```
+>>list users -f /tmp/users
+--------------
+Administrator
+Guest
+DefaultAccount
+Admin
+krbtgt
+ballen
+cramon
+hwells
+csnow
+ssmith
+wwest
+iwestallen
+--------------
+
+```
