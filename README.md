@@ -339,7 +339,7 @@ SLServer01
      [*] cramon lastlogon: Thu Mar  1 21:00:58 2018
      [*] hwells lastlogon: Wed Mar 28 23:44:30 2018
 ```
-## Lit
+## List
 
 The ```list``` commmand displays either all users, computers, or groups. Use the `-f` option to pipe the output of the command to a file.
 
