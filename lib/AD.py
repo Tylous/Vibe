@@ -69,7 +69,10 @@ class ldapz():
 	def ADtime(self, time):
 		global date
 		seconds = int(time) / 10000000
-		epoch = seconds - 11644473600
+		if seconds == 0:
+			epoch = 0
+		else:
+			epoch = seconds - 11644473600
 		dt = datetime.datetime(2000, 1, 1, 0, 0, 0)
 		date = dt.fromtimestamp(epoch)
 
