@@ -317,6 +317,8 @@ class menu(cmd.Cmd):
 				else:
 					pass
 				domain = creds(user)[0]
+				if domain.startswith(" "):
+					domain = domain[1:]
 				username = creds(user)[1]
 				password = creds(user)[2]
 				r = Sessions(domain, username, password, jitter)
@@ -338,6 +340,8 @@ class menu(cmd.Cmd):
 					print colors.RD + "[-] " + colors.NRM + "No user selected, Please try again"
 				else:
 					domain = creds(user)[0]
+					if domain.startswith(" "):
+						domain = domain[1:]
 					username = creds(user)[1]
 					password = creds(user)[2]
 					sh = Share_Hunting(domain, username, password, jitter)
