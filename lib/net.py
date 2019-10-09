@@ -3,7 +3,7 @@ from netaddr import *
 import re
 import random
 
-
+ 
 class colors:
 	RD = '\033[91m'
 	NRM = '\033[0m'
