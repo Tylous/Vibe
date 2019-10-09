@@ -28,6 +28,7 @@ class Share_Hunting():
 		self._lmhash = ''
 		self._nthash = ''
 		self._jitter = jitter
+		print "Scanning Using: " + self._domain + "\\" + self._user + ": " + self._password
 
 	def id_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
 		return ''.join(random.choice(chars) for _ in range(size))
@@ -92,6 +93,8 @@ class Sessions():
 		self._lmhash = ''
 		self._nthash = ''
 		self._jitter = jitter
+		print "Authenticating Using: "+ self._domain + "\\" + self._user + ": " + self._password
+
 
 	def _create_rpc_connection(self, target_computer):
 		rpctransport = transport.SMBTransport(target_computer, 445, r'\wkssvc', username=self._user, password=self._password, domain=self._domain, lmhash=self._lmhash, nthash=self._nthash)
