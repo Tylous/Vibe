@@ -1,4 +1,7 @@
 # Vibe
+
+Publically published Sep 4, 2018
+
 Vibe is a tool designed to preform post-ex lateral movement techniques while remaining undetected by network detection tools including Threat Hunting appliances. 
 Vibe works by pulling down all information about a domain, allowing users to perform the same domain net commands offline. Vibe also enumerates additional information that is not typically shown in these queries. 
 Vibe also provides the ability to scan systems to see what shares are available and what privileges the account used, has access to. Vibe also provides the ability to enumerate user’s currently logged into systems, as well as, who has been logged in, while remaining undetected. 
@@ -35,19 +38,24 @@ pip install  -r requirements.txt
 
 ```
 ./vibe.py -h
-usage: vibe.py [-h] -U username -P password -D domain -I IP [-o]
+usage: main [-h] -U username -P password -D domain -I IP [-o] [-r] [-p PORT]
+               [-u]
 
 optional arguments:
   -h, --help            show this help message and exit
-  -U username, --Username username
+  -U username, --username username
                         Username
-  -P password, --Password password
+  -P password, --password password
                         Password
-  -D domain, --Domain domain
+  -D domain, --domain domain
                         Fully Qualified Domain Name
-  -I IP, --IP IP        IP address of Domain Controller
-  -o, --Offline         Offline Mode
-  -r, --Remove          Remove Database
+  -I IP, --ip IP        IP address of Domain Controller
+  -o, --offline         Offline Mode
+  -r, --remove          Remove Database
+  -p PORT, --port PORT  Specify a specific port to connect on (default is 636)
+  -u, --unencrypted     Specify a specific for unencrypted mode (if LDAPS is
+                        not available)
+
 
 ```
 
@@ -70,24 +78,28 @@ root@kali:~/# ./vibe.py -U admin -P Password! -D STARLABS.local -I 172.16.144.18
                                            (@Tyl0us)    
 
 
-[+] Creating DB
 [+] Credentials Valid, Generating Database
+[+] Table 1/4 : Generating Group Table
+[+] Table 2/4 : Generating User Table
+[+] Table 3/4 : Generating Computer Table
+[+] Table 4/4 : Generating Password Policy Table
 [+] Sucessful Database Created
 0.434292078018
 >>help
 Commands
 ========
-add_cred             Adds credentials to the credential table. Use -p for passwords and -h for password hashes
 clear                Clears the screen
 help                 Displays this help menu
-list                 Lists either all users, computers, or groups. Use the -f option to pipe the contents to a file
-session              Scans target(s) to see who has/is currently logged in. Can take a list or range of hosts, using -t/--target and specify a user using -u/--user and --jitter/-j to add a delay. Requires: read/write privileges on either Admin$ or C$ share
+list                 Lists either all Users, Computers, or Groups. Use the -f option to pipe the contents to a file
+session              Scans target(s) to see who has/is currently logged in. Can take a list or range of hosts, using -t/--target and specify a user using -d/--domain, -u/--user, -p/--password and --jitter/-j to add a delay. Requires: read/write privileges on either Admin$ or C$ share
 net                  Perform a query to view all information pertaining to a specific user, group, or computer (Similar to the Windows net user, net group commands). example: 'net group Domain Admins'
+columns              Displays the column names in each of the three major tables (users, groups and computers
 query                Executes a query on the contents of tables
 search               Searches for a key word(s) through every field of every table for any matches, displaying row
-share_hunter         Scans target(s) enumerating the shares on the target(s) and the level of access the specified user, using  -u/--user. Can take a list or range of hosts, using -t/--target and --jitter/-j to add a delay
-show                 Shows the contents of Computers, Credentials, Groups, Password policy, Store, Credentials, Files Servers and Access tables
+share_hunter         Scans target(s) enumerating the shares on the target(s) and the level of access the specified user, using -d/--domain, -u/--user, -p/--password. Can take a list or range of hosts, using -t/--target and --jitter/-j to add a delay
+show                 Shows the contents of Users, Computers, Credentials, Groups, Password policy, Store, Credentials, Files Servers and Access tables
 store                Displays the contents of a specific table. Example: 'show [table name] (access, creds, computers, file servers, pwdpolicy, users)
+export               Export the contents of the database to a path in one of the following formats: CSV, HTML. (using with -f or --filetype)
 exit                 Exit Vibe
 >>
 
@@ -221,6 +233,20 @@ Password Properties: 1 DOMAIN_PASSWORD_COMPLEX
 ```
 
 The ```query``` command can be used to display a unique set of data based on the parememters specificed. The ```query``` command uses sql syntax.
+The ```columns``` command to display the column names in each of the three major tables. This can help focus queries made with the ```query``` command. 
+```
+>>columns user
+[-] Displaying the columns in the User Table
+['Username', 'Description', 'Home Directory', 'Password Last Set', 'Last Logged On', 'Account Settings', 'Primary Group Name', 'Member Of']
+>>columns group
+[-] Displaying the columns in the Group Table
+['Name', 'SID', 'Description', 'Member Of', 'Members']
+>>columns computer
+[-] Displaying the columns in the Computer Table
+['Name', 'Description', 'Operating System', 'Operating System Version Number', 'Member Of']
+>>
+```
+
 The ```net``` command can also be used simillar to the windows command line arguements ```net user```, ```net group``` and ```net computer```.
 
 
@@ -271,15 +297,16 @@ Computers
 | SLSERVER01 |               | Windows Server 2016 Essentials | 10.0 (14393)                      | SLServ01_Admin |
 +------------+---------------+--------------------------------+-----------------------------------+----------------+
 >>
+
 ```
 
 ## Share_Hunter 
 
-The ```share_hunter``` command scans the remote host(s) or ranges (using the ```-t``` or ```--targets``` option) discovering all available shares, as well as the level of access the specificed user has (using the ```-u``` or ```--user``` option). The ```-j``` or ```--jitter``` option can be used to add delay in between requests. This information can get stored and can be viewed using the ```show access <username>```.
+The ```share_hunter``` command scans the remote host(s) or ranges (using the ```-t``` or ```--targets``` option) discovering all available shares, as well as the level of access the specified user has (using the ```-d``` or ```--domain``` for the name of the domain, ```-u``` or ```--user``` the user's username, ```p``` or ```--password``` the user's password). The ```-j``` or ```--jitter``` option can be used to add a delay in between requests. This information can get stored and can be viewed using the ```show access <username>```.
 
 
 ```
->>share_hunter -t 172.16.144.185-172.16.144.190 --user admin -j 2
+>>share_hunter -t 172.16.144.185-172.16.144.190 -d starlabs.local --user admin --password Password!  -j 2
 172.16.144.186
 -----------------
    [+]  ADMIN$: Read\Write
@@ -320,11 +347,11 @@ The ```share_hunter``` command scans the remote host(s) or ranges (using the ```
 
 ## Session
 
-The ```session``` command scans the remote host(s) or ranges (using the ```-t``` or ```--targets``` option) discovering all active user's, as well who has had a profile on the remote system. This command requires the specified user (using the ```-u``` or ```--user``` option) has read/write privileges on either Admin$ or C$ share. The ```-j``` or ```--jitter``` option can be used to add delay in between requests. This information can get stored and can be viewed using the ```show access <username>```.
+The ```session``` command scans the remote host(s) or ranges (using the ```-t``` or ```--targets``` option) discovering all active users, as well as who has had a profile generated on the remote system. This command requires the specified user (using the ```-d``` or ```--domain``` for the name of the domain, ```-u``` or ```--user``` the user's username, ```p``` or ```--password``` the user's password) has read/write privileges on either Admin$ or C$ share. The ```-j``` or ```--jitter``` option can be used to a add delay in between requests. This information can get stored and can be viewed using the ```show access <username>```.
 
 
 ```
->>session -u admin --targets SLServer01 --jitter 2
+>>session -u admin --domain starlabs.local  -p Password!  -j 2 --targets SLServer01  --jitter 2
 SLServer01
 -----------------
   Currently Logged On
@@ -361,4 +388,21 @@ iwestallen
 --------------
 
 ```
+
+## Export
+
+The ```Export``` command allows the contents of the user, groups, computer to be exported into either an HTML or CSV document, using either ```-f``` or ```filetype``` option. This command also requires a full path to save the files to, using the ```-p``` or ```path``` options.
+
+```
+>>export -p /tmp/ -f html
+[+] File Saving to: /tmp//STARLABS.local_Users.html
+[+] File Saving to: /tmp//STARLABS.local_Groups.html
+[+] File Saving to: /tmp//STARLABS.local_Computers.html
+>>export --path /tmp/ --filetype csv
+[+] File Saving to: /tmp//STARLABS.local_Users.csv
+[+] File Saving to: /tmp//STARLABS.local_Groups.csv
+[+] File Saving to: /tmp//STARLABS.local_Computers.csv
+>>
+```
+
 
