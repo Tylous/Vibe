@@ -17,38 +17,6 @@ class colors:
 	NRM = '\033[0m'
 
 
-
-class Spinner:
-	busy = False
-	delay = 0.1
-
-	@staticmethod
-	def spinning_cursor():
-		while 1:
-			for cursor in '|/-\\':
-				yield cursor
-
-	def __init__(self, delay=None):
-		self.spinner_generator = self.spinning_cursor()
-		if delay and float(delay): self.delay = delay
-
-	def spinner_task(self):
-		while self.busy:
-			sys.stdout.write(next(self.spinner_generator))
-			sys.stdout.flush()
-			time.sleep(self.delay)
-			sys.stdout.write('\b')
-			sys.stdout.flush()
-
-	def start(self):
-		self.busy = True
-		threading.Thread(target=self.spinner_task).start()
-
-	def stop(self):
-		self.busy = False
-		time.sleep(self.delay)
-
-
 class ldapz():
 	def ldap_query(self,l, base_dn, subtree, objectFilter, attrs):
 		ldap_control = ldap.controls.SimplePagedResultsControl (True, size=1000, cookie='' )
@@ -76,7 +44,7 @@ class ldapz():
 		dt = datetime.datetime(2000, 1, 1, 0, 0, 0)
 		date = dt.fromtimestamp(epoch)
 
-	def main(self, IP, lusername, domain, password):
+	def main(self, IP, lusername, domain, password, unencrypted, port):
 		global gid
 		global l
 		gid = ""
@@ -103,19 +71,24 @@ class ldapz():
 		profilepath = []
 		samnamelist = []
 		sql = load ()
-		ldap.set_option( ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER )
-		con = ldap.initialize('ldaps://'+IP )
+		if port:
+			IP = IP+":"+args.ports
+		if unencrypted == True :
+			con = ldap.initialize('ldap://' + IP)
+		else:
+			ldap.set_option( ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER )
+			con = ldap.initialize('ldaps://'+IP )
+
 		try:
 			con.simple_bind_s(lusername + '@' + domain, password)
 			print colors.GRN + "[+] "+ colors.NRM + "Credentials valid, generating database"
-			spinner = Spinner ()
-			spinner.start ()
 		except ldap.INVALID_CREDENTIALS:
 			print colors.RD + "[-] "+ colors.NRM +  "Username or password is incorrect."
 			os.remove ( ".db/" + domain + ".db")
 			sys.exit()
 		except ldap.SERVER_DOWN:
 			print colors.RD + "[-] "+ colors.NRM + "Domain Controller either down or unreachable"
+			os.remove(".db/" + domain + ".db")
 			sys.exit()
 		dictionary=['distinguishedName', 'sAMAccountName']
 		user_attributes = ['distinguishedName', 'sAMAccountName', 'description', 'objectSid', 'homeDirectory', 'profilePath', 'pwdLastSet', 'lastLogon', 'memberOf',
@@ -125,7 +98,10 @@ class ldapz():
 		FGPP_attributes = ['msDS-LockoutDuration', 'msDS-MaximumPasswordAge', 'msDS-LockoutThreshold', 'msDS-MinimumPasswordLength', 'msDS-PasswordComplexityEnabled', 'msDS-PasswordHistoryLength','msDS-PSOAppliesTo','pwdProperties']
 		searchScope = ldap.SCOPE_SUBTREE
 		object = ['user', 'group', 'computer', 'msDS-PasswordSettings', 'FGPP-PasswordSettings']
-		l = ldap.initialize( 'ldaps://'+IP )
+		if unencrypted == True:
+			l = ldap.initialize('ldap://' + IP)
+		else:
+			l = ldap.initialize( 'ldaps://'+IP )
 		l.set_option( ldap.OPT_REFERRALS, 0 )
 		l.simple_bind_s(lusername + '@' + domain, password)
 		domain = domain.replace('.', ',DC=')
@@ -137,21 +113,25 @@ class ldapz():
 			for obj in object:
 				searchFilter = '(&(objectCategory=' + obj + '))'
 				if obj == 'group':
+					print colors.GRN + "[+] " + colors.NRM + "Table 1/4 : Generating Group Table"
 					results = self.ldap_query(l, baseDN, searchScope, searchFilter, group_attributes)
 					memberof = []
 					Desc = []
 					username = []
 					dictionary = dict ( zip ( usernamelist, samnamelist ) )
 				if obj == 'user':
+					print colors.GRN + "[+] " + colors.NRM + "Table 2/4 : Generating User Table"
 					results = self.ldap_query ( l, baseDN, searchScope, searchFilter, user_attributes )
 					memberof = []
 					Desc = []
 					username = []
 				if obj == 'computer':
+					print colors.GRN + "[+] " + colors.NRM + "Table 3/4 : Generating Computer Table"
 					results = self.ldap_query ( l, baseDN, searchScope, searchFilter, computer_attributes )
 					memberof = []
 					Desc = []
 				if obj == 'msDS-PasswordSettings':
+					print colors.GRN + "[+] " + colors.NRM + "Table 4/4 : Generating Password Policy Table"
 					results = l.search_s( baseDN, ldap.SCOPE_BASE )
 				if obj == 'FGPP-PasswordSettings':
 					FGPPDN = 'CN=Password Settings Container,CN=System,' + (baseDN)
@@ -329,10 +309,13 @@ class ldapz():
 							sql.Insert_Computers(name, description, OS, OSV, (str(membersOf)))
 		except ldap.REFERRAL:
 			print colors.RD + "[-] "+ colors.NRM + "Incorrect fully qualified domain name. Please check your settings and try again."
-			spinner.stop()
 			sys.exit()
 		sql.Close()
-		fileshare ()
-		spinner.stop ()
+	#	try:
+	#		fileshare ()
+	#	except TypeError as e:
+	#		print colors.RD + "[-] " + colors.NRM + "Error occured generating list of file shares"
+	#		print "[*] Skipping Fileshare enumeration. As result show fileshare will not work (however manual queries will work"
+	#		pass
 		print colors.GRN + "[+] "+ colors.NRM + "Database successfully created"
 		groupIDquery ()
