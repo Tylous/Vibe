@@ -4,7 +4,9 @@ warnings.simplefilter( "ignore", UserWarning )
 import pandas as dp
 import sqlite3
 from sqlite3 import Error
+import csv
 from pandas.io import sql
+
 
 dp.set_option( 'display.max_columns', None )
 dp.set_option( 'display.width', 999999909 )
@@ -21,37 +23,7 @@ def connect(name):
     conn = sqlite3.connect(db_name, check_same_thread=False)
     return conn
 
-def cred_db(domain, username, password, hash):
-    global Domain
-    Domain = [domain]
-    Username = [username]
-    Password = [password]
-    PassHash = [hash]
-    connect_db ()
-    data = {'Domain': Domain, 'Username': Username, 'Password': Password, 'Password Hash': PassHash}
-    check = connection.execute( '''SELECT name FROM sqlite_master WHERE type="table" AND name="Credentials"''' )
-    if check.fetchall():
-        olddb = dp.read_sql( 'select * from Credentials', connection )
-        newcreds = dp.DataFrame( data, columns=['Domain', 'Username', 'Password', 'Password Hash'] )
-        creds = [newcreds, olddb]
-        creds = dp.concat( creds )
-        creds = creds.drop_duplicates()
-        creds.to_sql( "Credentials", connection, index=False, if_exists="replace" )
-    else:
-        creds = dp.DataFrame( data, columns=['Domain', 'Username', 'Password', 'Password Hash'] )
-        creds.to_sql( "Credentials", connection, index=False, if_exists="replace" )
 
-def creds(user_input):
-    try:
-        connect_db()
-        auth = dp.read_sql('select * from Credentials where Username = \'' + user_input + '\'', connection )
-        auth = auth.to_string( index=False, header=False ).split( '  ' )
-        domain = auth[0]
-        username = auth[1]
-        password = auth[2]
-        return domain, username, password
-    except IndexError:
-        return
 
 
 def groupIDquery():
