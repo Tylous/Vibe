@@ -369,6 +369,7 @@ class menu(cmd.Cmd):
 					print "Computers"
 					print "---------"
 					print (tabulate(computer_tb, showindex=False, headers=computer_tb.columns, tablefmt="grid"))
+				return cmd.Cmd.cmdloop(self, intro)
 			except KeyboardInterrupt:
 				return
 			return cmd.Cmd.cmdloop(self, intro)
