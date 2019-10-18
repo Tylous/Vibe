@@ -187,6 +187,9 @@ class menu(cmd.Cmd):
 					display_Members_Of.append(' ')
 					display_Members_Of.append(' ')
 					for c1, c2, c3 in zip(display_Members_Of[::3], display_Members_Of[1::3], display_Members_Of[2::3]):
+						c1 = c1.encode('ascii', 'ignore')
+						c2 = c2.encode('ascii', 'ignore')
+						c3 = c3.encode('ascii', 'ignore')
 						print '{:<30}{:<30}{:<}'.format(c1, c2, c3)
 					result(tb)
 					return cmd.Cmd.cmdloop(self, intro)
@@ -209,6 +212,9 @@ class menu(cmd.Cmd):
 					display_Members.append(' ')
 					display_Members.append(' ')
 					for c1, c2, c3 in zip(display_Members[::3], display_Members[1::3], display_Members[2::3]):
+						c1 = c1.encode('ascii', 'ignore')
+						c2 = c2.encode('ascii', 'ignore')
+						c3 = c3.encode('ascii', 'ignore')
 						print '{:<30}{:<30}{:<}'.format(c1, c2, c3)
 					result(tb)
 					return cmd.Cmd.cmdloop(self, intro)
@@ -227,6 +233,9 @@ class menu(cmd.Cmd):
 					display_Members_Of.append(' ')
 					display_Members_Of.append(' ')
 					for c1, c2, c3 in zip(display_Members_Of[::3], display_Members_Of[1::3], display_Members_Of[2::3]):
+						c1 = c1.encode('ascii', 'ignore')
+						c2 = c2.encode('ascii', 'ignore')
+						c3 = c3.encode('ascii', 'ignore')
 						print '{:<30}{:<30}{:<}'.format(c1, c2, c3)
 					result(tb)
 					return cmd.Cmd.cmdloop(self, intro)
