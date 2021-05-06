@@ -54,6 +54,8 @@ def create_connection():
         ("Minimum Password Length", "Lockout Threshold", "Lockout Duration", "Passwords Remembered", "Password Properties")''')
         conn.execute('''CREATE TABLE FGPasswordPolicyTB
         ("Minimum Password Length", "Lockout Threshold", "Lockout Duration", "Passwords Remembered", "Password Properties", 'members')''')
+        conn.execute('''CREATE TABLE SPNTB
+        ("SPN", "Username", "Description", "Password Last Set", "Member Of")''')
     except Error as e:
         conn.close()
     finally:
@@ -92,7 +94,7 @@ def fileshare():
             uname_list = uname_list.to_string ( header=False, index=False )
             uname_list = uname_list.split ()
             l3 = [x for x in FS_list if x in uname_list]
-            l3 = filter ( None, l3 )
+            l3 = [_f for _f in l3 if _f]
             final = dp.DataFrame ( l3 )
             final = final.drop_duplicates ()
             final.to_sql("FileServer", connection, index=False, if_exists="replace")
@@ -118,6 +120,9 @@ class load():
 
     def Insert_FGPasswd(self, FGminpwd, FGlcknum, FGpwdhis, FGlckdur, FGpwdp, FGmember):
         connection.execute ("insert into FGPasswordPolicyTB('Minimum Password Length', 'Lockout Threshold', 'Lockout Duration', 'Passwords Remembered', 'Password Properties', 'members') values (?,?,?,?,?,?)", (FGminpwd, FGlcknum, FGpwdhis, FGlckdur, FGpwdp, FGmember))
+
+    def Insert_SPN(self, SPN, username, Desc, PLS, memberof):
+        connection.execute("insert into SPNTB ('SPN', 'Username', 'Description', 'Password Last Set', 'Member Of') values (?,?,?,?,?)", (SPN, username, Desc, PLS, memberof))
 
     def Close(self):
         connection.commit()

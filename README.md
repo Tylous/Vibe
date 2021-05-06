@@ -2,9 +2,8 @@
 
 Publically published Sep 4, 2018
 
-Vibe is a tool designed to preform post-ex lateral movement techniques while remaining undetected by network detection tools including Threat Hunting appliances. 
-Vibe works by pulling down all information about a domain, allowing users to perform the same domain net commands offline. Vibe also enumerates additional information that is not typically shown in these queries. 
-Vibe also provides the ability to scan systems to see what shares are available and what privileges the account used, has access to. Vibe also provides the ability to enumerate user’s currently logged into systems, as well as, who has been logged in, while remaining undetected. 
+
+Vibe is a tool designed to perform post-ex lateral movement techniques while remaining undetected by network detection tools including Threat Hunting appliances. Vibe works by pulling down all information about a domain, allowing users to perform the same domain net commands offline. Vibe also enumerates additional information that is not typically shown in these queries. Vibe also provides the ability to scan systems to see what shares available and what privileges the account, has access to. Vibe also provides the ability to enumerate users currently logged into systems, as well as who has been logged in, while remaining undetected.
 
 
 
@@ -12,7 +11,7 @@ Vibe also provides the ability to scan systems to see what shares are available 
 ## Installation
 
 
-Vibe was developed with Python version 2.7
+Vibe was developed with Python version <strike>2.7</strike> 3.0
 
 Tested and supported on Kali Linux and Ubuntu. 
 
@@ -27,8 +26,8 @@ Vibe uses the following external dependencies:
 
 To install run following commands:
 ```
-sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev
-pip install  -r requirements.txt
+sudo apt-get install libsasl2-dev python3-dev libldap2-dev libssl-dev
+pip3 install  -r requirements.txt
 
 ```
 
@@ -37,9 +36,8 @@ pip install  -r requirements.txt
 
 
 ```
-./vibe.py -h
-usage: main [-h] -U username -P password -D domain -I IP [-o] [-r] [-p PORT]
-               [-u]
+~/Vibe# python3 ./vibe.py -h
+usage: main [-h] -U username [-P password] -D domain -I IP [-o] [-r] [-p PORT] [-u]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -53,9 +51,7 @@ optional arguments:
   -o, --offline         Offline Mode
   -r, --remove          Remove Database
   -p PORT, --port PORT  Specify a specific port to connect on (default is 636)
-  -u, --unencrypted     Specify a specific for unencrypted mode (if LDAPS is
-                        not available)
-
+  -u, --unencrypted     Specify a specific for unencrypted mode (if LDAPS is not available)
 
 ```
 
@@ -78,13 +74,14 @@ root@kali:~/# ./vibe.py -U admin -P Password! -D STARLABS.local -I 172.16.144.18
                                            (@Tyl0us)    
 
 
-[+] Credentials Valid, Generating Database
-[+] Table 1/4 : Generating Group Table
-[+] Table 2/4 : Generating User Table
-[+] Table 3/4 : Generating Computer Table
-[+] Table 4/4 : Generating Password Policy Table
-[+] Sucessful Database Created
-0.434292078018
+[+] Credentials valid, generating database
+[+] Table 1/5 : Generating User Table
+[+] Table 2/5 : Generating Group Table
+[+] Table 3/5 : Generating Computer Table
+[+] Table 4/5 : Generating Password Policy Table
+[+] Table 5/5 : Generating SPN Table
+[+] Database successfully created
+[*] 0.11863517761230469
 >>help
 Commands
 ========
@@ -99,7 +96,7 @@ search               Searches for a key word(s) through every field of every tab
 share_hunter         Scans target(s) enumerating the shares on the target(s) and the level of access the specified user, using -d/--domain, -u/--user, -p/--password. Can take a list or range of hosts, using -t/--target and --jitter/-j to add a delay
 show                 Shows the contents of Users, Computers, Credentials, Groups, Password policy, Store, Credentials, Files Servers and Access tables
 store                Displays the contents of a specific table. Example: 'show [table name] (access, creds, computers, file servers, pwdpolicy, users)
-export               Export the contents of the database to a path in one of the following formats: CSV, HTML. (using with -f or --filetype)
+export               Export the contents of the database to a path in one of the following formats: csv, html. (using with -f or --filetype and -p or --path for the file path)
 exit                 Exit Vibe
 >>
 
@@ -176,7 +173,8 @@ There are several different options that can be used with the ```show``` command
 * file servers
 * groups
 * pwdpolicy
-* store 
+* store
+* spn 
 * users
 
 Below are some examples of the information stored:

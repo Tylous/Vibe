@@ -28,7 +28,7 @@ def IP(netaddr):
 			for iprange in IPNetwork(IPString):
 				targets.append(str(iprange))
 		else:
-			print colors.RD + "[-] " + colors.NRM + "Invalid IP address"
+			print(colors.RD + "[-] " + colors.NRM + "Invalid IP address")
 	else:
 		range = IPString.split(' ')
 		for ips in range:

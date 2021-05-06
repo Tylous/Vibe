@@ -28,7 +28,7 @@ class Share_Hunting():
 		self._lmhash = ''
 		self._nthash = ''
 		self._jitter = jitter
-		print "Scanning Using: " + self._domain + "\\" + self._user + ": " + self._password
+		print("Scanning Using: " + self._domain + "\\" + self._user + ": " + self._password)
 
 	def id_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
 		return ''.join(random.choice(chars) for _ in range(size))
@@ -40,8 +40,8 @@ class Share_Hunting():
 		for target in targets:
 			time.sleep(int(self._jitter))
 			try:
-				print target
-				print "-----------------"
+				print(target)
+				print("-----------------")
 				smb = SMBConnection('*SMBSERVER', target, sess_port=445, timeout=10)
 				smb.login(self._user, self._password, self._domain)
 				list = smb.listShares()
@@ -58,13 +58,13 @@ class Share_Hunting():
 									write = smb.createDirectory(share, path)
 									if write:
 										smb.deleteDirectory(share, path)
-										print "   " + colors.GRN + "[+]" + colors.NRM + "  " + share + ": Read\Write"
+										print("   " + colors.GRN + "[+]" + colors.NRM + "  " + share + ": Read\Write")
 										perm = 'Read\Write'
 								except Exception:
-									print "   " + colors.BLU + "[*]" + colors.NRM + "  " + share + ": Read"
+									print("   " + colors.BLU + "[*]" + colors.NRM + "  " + share + ": Read")
 									perm = 'Read'
 						except Exception:
-							print "   " + colors.RD + "[-]" + colors.NRM + "  " + share + ": No Access"
+							print("   " + colors.RD + "[-]" + colors.NRM + "  " + share + ": No Access")
 							del perm
 							continue
 						if perm:
@@ -72,7 +72,7 @@ class Share_Hunting():
 							sharelist.append(share)
 							permissionlist.append(perm)
 			except Exception:
-				print colors.BLU + "   [*] " + colors.NRM + "Host either not accessible or port 445 closed"
+				print(colors.BLU + "   [*] " + colors.NRM + "Host either not accessible or port 445 closed")
 				continue
 			except KeyboardInterrupt:
 				return
@@ -93,7 +93,7 @@ class Sessions():
 		self._lmhash = ''
 		self._nthash = ''
 		self._jitter = jitter
-		print "Authenticating Using: "+ self._domain + "\\" + self._user + ": " + self._password
+		print("Authenticating Using: "+ self._domain + "\\" + self._user + ": " + self._password)
 
 
 	def _create_rpc_connection(self, target_computer):
@@ -114,15 +114,15 @@ class Sessions():
 			try:
 				target_computer = target
 				self._create_rpc_connection(target_computer)
-				print target_computer
-				print "-----------------"
+				print(target_computer)
+				print("-----------------")
 				smb = SMBConnection('*SMBSERVER', target_computer, sess_port=445, timeout=5)
 				smb.login(self._user, self._password, self._domain)
 				try:
 					sess = wkst.hNetrWkstaUserEnum(self._rpc_connection, 1)
-				except DCERPCException, e:
+				except DCERPCException as e:
 					users = []
-					print colors.RD + "     [-]" + colors.NRM + " User does not have access"
+					print(colors.RD + "     [-]" + colors.NRM + " User does not have access")
 					continue
 				for wksta_user in sess['UserInfo']['WkstaUserInfo']['Level1']['Buffer']:
 					userName = wksta_user['wkui1_username'][:-1]
@@ -135,31 +135,31 @@ class Sessions():
 							pass
 						else:
 							users.append(user)
-				print "  Currently Logged On"
-				print "  -------------------"
+				print("  Currently Logged On")
+				print("  -------------------")
 				for user in users:
-					print "     " + colors.GRN + "[+] " + colors.NRM + user
+					print("     " + colors.GRN + "[+] " + colors.NRM + user)
 				del users
 				share = 'C$'
 				path = '\\Users\\*'
 				read = smb.listPath(share, path)
-				print "\n  Users Who Have Logged On"
-				print "  -------------------------"
+				print("\n  Users Who Have Logged On")
+				print("  -------------------------")
 				for r in read:
 					if r.get_longname() == "Public" or r.get_longname() == "All Users" or r.get_longname() == "Default" or r.get_longname() == "Default User" or r.get_longname() == "." or r.get_longname() == "..":
 						pass
 					else:
 						if r.is_directory():
-							print  colors.GRN + "     [+] " + colors.NRM + r.get_longname() + " lastlogon: " + time.ctime(float(r.get_mtime_epoch()))
+							print(colors.GRN + "     [+] " + colors.NRM + r.get_longname() + " lastlogon: " + time.ctime(float(r.get_mtime_epoch())))
 			except UnboundLocalError as e:
-				print target
+				print(target)
 				users = []
-				print e
-				print colors.RD + "     [-] " + colors.NRM + "User does not have access"
+				print(e)
+				print(colors.RD + "     [-] " + colors.NRM + "User does not have access")
 				continue
 			except socket.error:
 				users = []
-				print colors.BLU + "     [*] " + colors.NRM + "Host either not accessible or port 445 closed"
+				print(colors.BLU + "     [*] " + colors.NRM + "Host either not accessible or port 445 closed")
 				continue
 
 			except KeyboardInterrupt:
@@ -169,13 +169,13 @@ class Sessions():
 					share = 'C$'
 					path = '\\Documents and Settings\\*'
 					read = smb.listPath(share, path)
-					print "\nUsers who have logged on"
-					print "--------------------------"
+					print("\nUsers who have logged on")
+					print("--------------------------")
 					for r in read:
 						if r.get_longname() == "Public" or r.get_longname() == "All Users" or r.get_longname() == "Default" or r.get_longname() == "Default User" or r.get_longname() == "." or r.get_longname() == "..":
 							pass
 						else:
 							if r.is_directory():
-								print "     [*] " + r.get_longname() + " lastlogon: " + time.ctime(float(r.get_mtime_epoch()))
+								print("     [*] " + r.get_longname() + " lastlogon: " + time.ctime(float(r.get_mtime_epoch())))
 				except SessionError:
 					continue
