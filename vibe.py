@@ -174,7 +174,7 @@ class menu(cmd.Cmd):
 				option = option.split(' ')
 				type = option[0]
 				value = " ".join(option[1:])
-				dp.options.display.max_colwidth = -1
+				dp.options.display.max_colwidth = None
 				if type in ["user"]:
 					tb = dp.read_sql('select * from UserTB where Username = \'' + value + '\' COLLATE NOCASE', conn)
 					if tb.empty:
