@@ -45,7 +45,7 @@ class ldapz():
 		dt = datetime.datetime(2000, 1, 1, 0, 0, 0)
 		date = dt.fromtimestamp(epoch)
 
-	def main(self, IP, lusername, domain, password, unencrypted, port):
+	def main(self, IP, lusername, domain, password, port, unencrypted):
 		global gid
 		global l
 		gid = ""
@@ -73,7 +73,7 @@ class ldapz():
 		samnamelist = []
 		sql = load ()
 		if port:
-			IP = IP+":"+args.ports
+			IP = IP+":"+port
 		if unencrypted == True :
 			con = ldap.initialize('ldap://' + IP)
 		else:
